@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filter Dashboard</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-city"></i>
+                <span>SmartCity</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a class="nav-item active" onclick="showSection('inbox')">
+                    <i class="fas fa-inbox"></i>
+                    <span>Inbox</span>
+                </a>
+                        
+                <a
+                    class="nav-item" onclick="showSection('profile')"><i
+                        class="fas fa-user"></i><span>Profile</span></a></nav>
+            <div class="sidebar-footer">
+                <button class="btn btn-outline" onclick="logout()"><i
+                        class="fas fa-sign-out-alt"></i><span>Logout</span></button></div>
+        </aside>
+        <main class="main-content">
+            <header class="dashboard-header">
+                <div class="header-left"><button class="mobile-menu-btn" onclick="toggleSidebar()"><i
+                            class="fas fa-bars"></i></button>
+                    <h1 id="pageTitle">Inbox</h1>
+                </div>
+                <div class="header-right">
+                    <div class="user-info"><i class="fas fa-user-shield"></i><span id="userName">Filter Team</span>
+                    </div>
+                </div>
+            </header>
+            <section id="inbox" class="content-section active">
+                <div class="complaints-header"
+                    style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap">
+                    <h2>Complaints for Review</h2>
+                    <div style="display:flex;gap:.5rem;flex-wrap:wrap"><select id="statusFilter"
+                            onchange="renderInbox()">
+                            <option value="">All</option>
+                            <option>Pending</option>
+                            <option>In Progress</option>
+                            <option>Resolved</option>
+                            <option>Rejected</option>
+                        </select><select id="categoryFilter" onchange="renderInbox()">
+                            <option value="">All</option>
+                            <option value="water">Water</option>
+                            <option value="electricity">Electricity</option>
+                            <option value="garbage">Garbage</option>
+                            <option value="roads">Roads</option>
+                            <option value="streetlight">Streetlight</option>
+                            <option value="drainage">Drainage</option>
+                            <option value="other">Other</option>
+                        </select><input id="searchInput" placeholder="Search..." onkeyup="renderInbox()"></div>
+                </div>
+                <div id="inboxList">
+                    <p class="text-center">Loading...</p>
+                </div>
+            </section>
+          
+            <section id="profile" class="content-section">
+                <div class="profile-container">
+                    <div class="profile-header">
+                        <h2>My Profile</h2>
+                    </div>
+                    <div class="profile-card">
+                        <form id="profileForm">
+                            <div class="form-group"><label>Name</label><input id="profileName" name="name" required>
+                            </div>
+                            <div class="form-group"><label>Email</label><input id="profileEmail" name="email" required
+                                    readonly></div>
+                            <div class="form-group"><label>Phone</label><input id="profilePhone" name="phone"></div>
+                            <button class="btn btn-primary">Update</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/complaints.js"></script>
+    <script src="js/filter-dashboard.js"></script>
+</body>
+
+</html>
