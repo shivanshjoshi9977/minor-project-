@@ -8,4 +8,5 @@ const db = async () => {
         process.exit(1)
     }
 }
+console.log("MongoDB connected");
 module.exports = db;
