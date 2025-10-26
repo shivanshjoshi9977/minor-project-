@@ -64,7 +64,7 @@ const adminurl=`${serverurl}/admin/login`
 const email=document.getElementsByName('email').value
 const password=document.getElementsByName('password').value
 const response = fetch(adminurl,{
-  method:'GET',
+  method:'POST',
   headers:{
     'Content-Type':'application/json'
   },
@@ -73,8 +73,8 @@ const response = fetch(adminurl,{
     password
   })
 })
-const data=response.json()
-console.log(data);
+// const data=response.json()
+console.log(response);
 })
 
 
