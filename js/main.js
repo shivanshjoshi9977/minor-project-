@@ -59,48 +59,26 @@ const adminPassword="admin123"
 
 adminLoginForm.addEventListener('submit',(event)=>{
 event.preventDefault()
-  const data=new FormData(adminLoginForm)
-const [email,pass]=data
-
-if(email[1]===adminEmail&&pass[1]===adminPassword){
-  adminLog.innerHTML='<span class="spinner"></span>Processing...'
-  setInterval(()=>{
-    window.location.href='admin-dashboard.html'
-  },1000)
-   setTimeout(()=>{
-    showNotification("  details matched", "info");
-   },500)
-}else{
-  showNotification("  Invalid credentials", "error");
-}
-
+const serverurl="http://localhost:3000"
+const adminurl=`${serverurl}/admin/login`
+const email=document.getElementsByName('email').value
+const password=document.getElementsByName('password').value
+const response = fetch(adminurl,{
+  method:'GET',
+  headers:{
+    'Content-Type':'application/json'
+  },
+  body:JSON.stringify({
+    email,
+    password
+  })
+})
+const data=response.json()
+console.log(data);
 })
 
 
-// ***********************************admin login**************************************
 
-const  filterEmail= 'filter@smartcity.gov'
-const  filterPassword= 'filter123'
-const filterLoginForm=document.getElementById('filterLoginForm')
-const filterLog=document.getElementById('filterLog')
-
-filterLoginForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-  const data2 = new FormData(filterLoginForm);
-  const [email2, pass2] = data2;
-  if (email2[1] === filterEmail && pass2[1] === filterPassword) {
-    filterLog.innerHTML = '<span class="spinner"></span>Processing...';
-   setTimeout(() => {
-  window.location.href = "filter-dashboard.html";
-}, 1000);
-
-   setTimeout(()=>{
-    showNotification("  details matched", "info");
-   },500)
-  } else {
-    showNotification("  Invalid credentials", "error");
-  }
-});
 
 
 function showNotification(m, type = "success") {
