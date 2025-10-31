@@ -44,21 +44,21 @@
                     <div class="stat-card">
                         <div class="stat-icon pending"><i class="fas fa-clock"></i></div>
                         <div class="stat-info">
-                            <h3 id="pending">0</h3>
+                            <h3 id="pendingStats">0</h3>
                             <p>Pending</p>
                         </div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon progress"><i class="fas fa-spinner"></i></div>
                         <div class="stat-info">
-                            <h3 id="progress">0</h3>
+                            <h3 id="progressCount">0</h3>
                             <p>In Progress</p>
                         </div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon resolved"><i class="fas fa-check-circle"></i></div>
                         <div class="stat-info">
-                            <h3 id="resolved">0</h3>
+                            <h3 id="resolvedCount">0</h3>
                             <p>Resolved</p>
                         </div>
                     </div>
@@ -74,13 +74,16 @@
                 <div class="complaints-header"
                     style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap">
                     <h2 id="sectionHeading">All Complaints</h2>
-                    <div style="display:flex;gap:.5rem;flex-wrap:wrap"><select id="statusFilter" onchange="renderAll()">
+                    <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+                        <select id="statusFilter" onchange="renderAll()">
                             <option value="">All</option>
                             <option>Pending</option>
                             <option>In Progress</option>
                             <option>Resolved</option>
                             <option>Rejected</option>
-                        </select><select id="categoryFilter" onchange="renderAll()">
+                        </select>
+
+                        <select id="categoryFilter" onchange="renderAll()">
                             <option value="">All</option>
                             <option value="water">Water</option>
                             <option value="electricity">Electricity</option>
@@ -89,8 +92,12 @@
                             <option value="streetlight">Streetlight</option>
                             <option value="drainage">Drainage</option>
                             <option value="other">Other</option>
-                        </select><input id="searchInput" placeholder="Search..." onkeyup="renderAll()"></div>
+                        </select>
+
+                        <input id="searchInput" placeholder="Search..." onkeyup="renderAll()" />
+                    </div>
                 </div>
+
                 <div id="allList">
                     <p class="text-center">Loading...</p>
                 </div>

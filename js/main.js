@@ -57,13 +57,14 @@ const adminPassword="admin123"
 
 
 
-adminLoginForm.addEventListener('submit',(event)=>{
+adminLoginForm.addEventListener('submit',async (event)=>{
 event.preventDefault()
 const serverurl="http://localhost:3000"
 const adminurl=`${serverurl}/admin/login`
-const email=document.getElementsByName('email').value
-const password=document.getElementsByName('password').value
-const response = fetch(adminurl,{
+const email=document.getElementById('adminEmail').value
+const password=document.getElementById('adminPassword').value
+console.log(email,password);
+const response = await fetch(adminurl,{
   method:'POST',
   headers:{
     'Content-Type':'application/json'
@@ -73,9 +74,12 @@ const response = fetch(adminurl,{
     password
   })
 })
-// const data=response.json()
-console.log(response);
-})
+if (response.status == 200 || response.status == 204) {
+  alert('successfully login...');
+  window.location.href="admin-dashboard.html";
+}else{
+  alert('Invalid credentials');
+}})
 
 
 
@@ -109,92 +113,81 @@ function showNotification(m, type = "success") {
 
 
 // **************************** register ************************************************
-
-let pass_two = document.getElementById("pass2")
-let phone_num = document.getElementById("phone_num")
-let register = document.getElementById("registerForm")
-let matcher = document.getElementById("matcher");
-
-register.addEventListener("submit",(e)=>{
-  e.preventDefault()
-
-  let name = document.querySelector("input[name='name']").value;
-  let email = document.querySelector("input[name='email']").value;
-  let phone = document.querySelector("input[name='phone']").value;
-  let pass1 = document.getElementById("pass1").value;
-  let pass2 = document.getElementById("pass2").value;
-
-   let strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
-  // Check strong password
-  // if (!strongRegex.test(pass1)) {
-  //   matcher.innerText = "⚠️ Weak password! Use at least 8 chars with uppercase, lowercase, number & symbol.";
-  //   matcher.style.color = "red";
-  //   pass_one.style.border = "2px solid red";
-  //   return;
-  // }
-  if(name.length<3){
-   showNotification(" Name too short (min 3 characters)", "error")
-   return
-  }
-  
-if(pass1 & pass2.length<6){
- showNotification(" Password too short (min 6 characters)", "error")
- return
+const register=document.getElementById('registerForm')
+register.addEventListener('submit',async (event)=>{
+event.preventDefault()
+const serverurl="http://localhost:3000"
+const registerurl=`${serverurl}/user/register`
+const email=document.getElementById('userEmail').value
+const password=document.getElementById('userPassword').value
+const contact=document.getElementById('phone_num').value;
+const fullName=document.getElementById('name').value;
+const confirmPassword = document.getElementById('pass2').value;
+if(password !== confirmPassword) {
+  alert('Passwords do not match!');
+  return;
 }
-  if (pass1 !== pass2) {
-    showNotification(" Passwords do not match ", "error");
-    pass_two.style.border="2px solid red"
-    return ; 
-  }
-  
-    pass_two.style.border="2px solid green"
-    
-    let user = { name , email , phone , password:pass1}
-    localStorage.setItem("user",JSON.stringify(user))
-    matcher.style.color = "green";
+console.log(email,password,contact,fullName,confirmPassword);
+const response = await fetch(registerurl,{
+  method:'POST',
+  headers:{
+    'Content-Type':'application/json'
+  },
 
-setTimeout(()=>{
- showNotification("  Registered Successfully!", "success");
- document.getElementById('register_btn').innerHTML = '<span class="spinner"></span>Processing...';
-},100)
-   setTimeout(() => {
-  
-    closeModal('registerModal')
-openModal('citizenLoginModal')
-document.getElementById('register_btn').innerHTML = 'Register';
- pass_two.style.border='2px solid var(--gray-200)'
- register.reset()
-  },1000);   
-
-
+  body:JSON.stringify({
+    fullName,
+    email,
+    password,
+    contact
+  })
 })
+// const data=response.json()
+console.log(response);
+console.log(response.ok);
+
+if (response.status == 200 || response.status == 204) {
+  alert('successfully Registered...');
+   closeModal('registerModal')
+}else{
+  alert('Failed to Registered...');
+}})
 
 //************************login************************/
 
-let loginForm = document.getElementById("citizenLoginForm");
+const citizenLoginForm = document.getElementById("citizenLoginForm");
 
-loginForm.addEventListener("submit", (e) => {
-  e.preventDefault();
+citizenLoginForm.addEventListener('submit',async (event)=>{
+event.preventDefault()
+const serverurl="http://localhost:3000"
+const citizenurl=`${serverurl}/user/login`
+const email=document.getElementById('userEmail').value
+const password=document.getElementById('userPassword').value
+console.log(email,password);
+const response = await fetch(citizenurl,{
+  method:'POST',
+  headers:{
+    'Content-Type':'application/json'
+  },
+  body:JSON.stringify({
+    email,
+    password
+  })
+})
+// const data=response.json()
+console.log(response);
+console.log(response.ok);
 
-  let email = loginForm.querySelector("input[name='email']").value;
-  let password = loginForm.querySelector("input[name='password']").value;
+if (response.status == 200 || response.status == 204) {
+  alert('successfully login...');
+  localStorage.setItem("loggedInUserEmail", email);
+  window.location.href="citizen-dashboard.html";
+}else{
+  alert('Invalid credentials');
+}})
 
-  let storedUser = JSON.parse(localStorage.getItem("user"));
 
-  if (storedUser && storedUser.email === email && storedUser.password === password) {
-    localStorage.setItem("loggedInUser", storedUser.name);
-      
-          document.querySelector("#citizenLog").innerHTML = '<span class="spinner"></span>Processing...';
-    setTimeout(()=>{
-      window.location.href = "citizen-dashboard.html";
-    },1000)
-    setTimeout(()=>{
-    showNotification(" details matched", "info");
-   },500)
-  } else {
-    // alert("❌ Invalid email or password");
-    showNotification("  Invalid credentials", "error");
-  }
-});
+
+
+
+  
 
