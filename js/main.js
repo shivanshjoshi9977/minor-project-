@@ -1,3 +1,8 @@
+const SERVER_URL = "http://localhost:3000"
+const adminLogin = `${SERVER_URL}/admin/login`
+const userLogin = `${SERVER_URL}/user/login`
+const userRegister = `${SERVER_URL}/user/login`
+
 const slides = document.querySelectorAll(".slide");
 const indicator = document.querySelectorAll(".indicator");
 const slideButton = document.querySelector(".button");
@@ -59,12 +64,10 @@ const adminPassword="admin123"
 
 adminLoginForm.addEventListener('submit',async (event)=>{
 event.preventDefault()
-const serverurl="http://localhost:3000"
-const adminurl=`${serverurl}/admin/login`
 const email=document.getElementById('adminEmail').value
 const password=document.getElementById('adminPassword').value
 console.log(email,password);
-const response = await fetch(adminurl,{
+const response = await fetch(adminLogin,{
   method:'POST',
   headers:{
     'Content-Type':'application/json'
@@ -116,8 +119,6 @@ function showNotification(m, type = "success") {
 const register=document.getElementById('registerForm')
 register.addEventListener('submit',async (event)=>{
 event.preventDefault()
-const serverurl="http://localhost:3000"
-const registerurl=`${serverurl}/user/register`
 const email=document.getElementById('userEmail').value
 const password=document.getElementById('userPassword').value
 const contact=document.getElementById('phone_num').value;
@@ -128,7 +129,7 @@ if(password !== confirmPassword) {
   return;
 }
 console.log(email,password,contact,fullName,confirmPassword);
-const response = await fetch(registerurl,{
+const response = await fetch(userRegister,{
   method:'POST',
   headers:{
     'Content-Type':'application/json'
@@ -158,12 +159,10 @@ const citizenLoginForm = document.getElementById("citizenLoginForm");
 
 citizenLoginForm.addEventListener('submit',async (event)=>{
 event.preventDefault()
-const serverurl="http://localhost:3000"
-const citizenurl=`${serverurl}/user/login`
 const email=document.getElementById('userEmail').value
 const password=document.getElementById('userPassword').value
 console.log(email,password);
-const response = await fetch(citizenurl,{
+const response = await fetch(userLogin,{
   method:'POST',
   headers:{
     'Content-Type':'application/json'
