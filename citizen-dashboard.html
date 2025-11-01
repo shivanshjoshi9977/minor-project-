@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,38 @@
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .complaint-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #fff;
+        }
+
+        .status.pending {
+            color: #f0ad4e;
+        }
+
+        .status.resolved {
+            color: #28a745;
+        }
+
+        .status.inprogress {
+            color: #007bff;
+        }
+
+        .text-error {
+            color: red;
+        }
+
+        .recent-item {
+            border-bottom: 1px solid #eee;
+            padding: 8px 0;
+        }
+    </style>
 </head>
+
 <body>
     <div class="dashboard-container">
         <!-- Sidebar -->
@@ -16,26 +48,26 @@
                 <i class="fas fa-globe"></i>
                 <span>SmartCity Portal</span>
             </div>
-            
+
             <nav class="sidebar-nav">
-                <a  class="nav-item active" onclick="showSection('dashboard')">
+                <a class="nav-item active" onclick="showSection('dashboard')">
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
-                <a  class="nav-item" onclick="showSection('new-complaint')">
+                <a class="nav-item" onclick="showSection('new-complaint')">
                     <i class="fas fa-plus-circle"></i>
                     <span>New Complaint</span>
                 </a>
-                <a  class="nav-item" onclick="showSection('my-complaints')">
+                <a class="nav-item" onclick="showSection('my-complaints')">
                     <i class="fas fa-list"></i>
                     <span>My Complaints</span>
                 </a>
-                <a  class="nav-item" onclick="showSection('profile')">
+                <a class="nav-item" onclick="showSection('profile')">
                     <i class="fas fa-user"></i>
                     <span>Profile</span>
                 </a>
             </nav>
-            
+
             <div class="sidebar-footer">
                 <button class="btn btn-outline" onclick="logout()">
                     <i class="fas fa-sign-out-alt"></i>
@@ -53,7 +85,7 @@
                     </button>
                     <h1 id="pageTitle">Dashboard</h1>
                 </div>
-                
+
                 <div class="header-right">
                     <div class="user-info">
                         <i class="fas fa-user-circle"></i>
@@ -73,7 +105,7 @@
                             <p>Total Complaints</p>
                         </div>
                     </div>
-                    
+
                     <div class="stat-card">
                         <div class="stat-icon pending">
                             <i class="fas fa-clock"></i>
@@ -83,7 +115,7 @@
                             <p>Pending</p>
                         </div>
                     </div>
-                    
+
                     <div class="stat-card">
                         <div class="stat-icon progress">
                             <i class="fas fa-spinner"></i>
@@ -93,7 +125,7 @@
                             <p>In Progress</p>
                         </div>
                     </div>
-                    
+
                     <div class="stat-card">
                         <div class="stat-icon resolved">
                             <i class="fas fa-check-circle"></i>
@@ -148,12 +180,13 @@
                         <h2>Submit New Complaint</h2>
                         <p>Fill out the form below to report a civic issue</p>
                     </div>
-                    
+
                     <form id="complaintForm" class="complaint-form">
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="title">Issue Title *</label>
-                                <input type="text" id="title" name="title" required placeholder="Brief description of the issue">
+                                <input type="text" id="title" name="title" required
+                                    placeholder="Brief description of the issue">
                             </div>
                             <div class="form-group">
                                 <label for="category">Category *</label>
@@ -169,24 +202,26 @@
                                 </select>
                             </div>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="description">Detailed Description *</label>
-                            <textarea id="description" name="description" rows="4" required placeholder="Provide detailed information about the issue"></textarea>
+                            <textarea id="description" name="description" rows="4" required
+                                placeholder="Provide detailed information about the issue"></textarea>
                         </div>
-                        
+
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="location">Location *</label>
-                                <input type="text" id="location" name="location" required placeholder="Exact location of the issue">
+                                <input type="text" id="location" name="location" required
+                                    placeholder="Exact location of the issue">
                             </div>
-                            <div class="form-group">
+                            <!-- <div class="form-group">
                                 <label for="image">Upload Image (Optional)</label>
                                 <input type="file" id="image" name="image" accept="image/*">
                                 <small>Max file size: 5MB</small>
-                            </div>
+                            </div> -->
                         </div>
-                        
+
                         <div class="form-actions">
                             <button type="button" class="btn btn-outline" onclick="resetForm()">Reset</button>
                             <button type="submit" class="btn btn-primary">Submit Complaint</button>
@@ -216,10 +251,11 @@
                             <option value="drainage">Drainage</option>
                             <option value="other">Other</option>
                         </select>
-                        <input type="text" id="searchInput" placeholder="Search complaints..." onkeyup="filterComplaints()">
+                        <input type="text" id="searchInput" placeholder="Search complaints..."
+                            onkeyup="filterComplaints()">
                     </div>
                 </div>
-                
+
                 <div class="complaints-list" id="complaintsList">
                     <p class="text-center">Loading complaints...</p>
                 </div>
@@ -231,7 +267,7 @@
                         <h2>My Profile</h2>
                         <p>Manage your account information</p>
                     </div>
-                    
+
                     <div class="profile-grid">
                         <div class="profile-card">
                             <h3>Personal Information</h3>
@@ -251,7 +287,7 @@
                                 <button type="submit" class="btn btn-primary">Update Profile</button>
                             </form>
                         </div>
-                        
+
                         <div class="profile-card">
                             <h3>Change Password</h3>
                             <form id="passwordForm">
@@ -296,4 +332,5 @@
     <script src="js/complaints.js"></script>
     <script src="js/citizen-dashboard.js"></script>
 </body>
+
 </html>

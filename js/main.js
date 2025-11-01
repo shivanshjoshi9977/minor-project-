@@ -180,6 +180,7 @@ console.log(response.ok);
 if (response.status == 200 || response.status == 204) {
   alert('successfully login...');
   localStorage.setItem("loggedInUserEmail", email);
+  localStorage.setItem("userEmail", email)
   window.location.href="citizen-dashboard.html";
 }else{
   alert('Invalid credentials');

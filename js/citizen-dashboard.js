@@ -1,12 +1,12 @@
-//  window.onload = function () {
-//     let userName = localStorage.getItem("loggedInUser");
+window.onload = function () {
+  let userName = localStorage.getItem("loggedInUser");
 
-//     if (userName) {
-//       document.getElementById("userName").innerText = userName;
-//     } else {
-//       document.getElementById("userName").innerText = "Guest";
-//     }
-//   };
+  if (userName) {
+    document.getElementById("userName").innerText = userName;
+  } else {
+    document.getElementById("userName").innerText = "Guest";
+  }
+};
 
 //   const showSection=function(id){
 // document.querySelectorAll('.content-section').forEach(s=> s.classList.remove('active'))
@@ -32,121 +32,174 @@
 //     window.location.href='index.html'
 //    },600)
 // }
-window.onload = function () {
-  let userName = localStorage.getItem("loggedInUser");
-  document.getElementById("userName").innerText = userName || "Guest";
-};
 
-const showSection = function (id) {
-  document.querySelectorAll(".content-section").forEach((s) => s.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-  document.querySelectorAll(".nav-item").forEach((s) => s.classList.remove("active"));
-  document.querySelector(`[onclick="showSection('${id}')"]`).classList.add("active");
 
-  const titles = {
-    dashboard: "Dashboard",
-    "new-complaint": "New Complaint",
-    "my-complaints": "My Complaints",
-    profile: "Profile",
-  };
-  document.getElementById("pageTitle").textContent = titles[id] || "Dashboard";
+// js/citizen-dashboard.js
 
-  if (id === "my-complaints") loadList();
-};
+document.addEventListener("DOMContentLoaded", () => {
+  loadComplaints();
+});
 
-const logout = function () {
-  showNotification("Logged out", "success");
-  setTimeout(() => {
-    window.location.href = "index.html";
-  }, 600);
-};
+// Function to load all complaints dynamically
+async function loadComplaints() {
+  const listContainer = document.getElementById("complaintsList");
+  const recentContainer = document.getElementById("recentComplaints");
 
-// -------------------------------
-// 🟢 DYNAMIC COMPLAINT SECTION
-// -------------------------------
-let complaintsData = [];
-
-// ✅ Replace with your real API URL
-const API_URL2 = "http://localhost:3000/complaint/fetchMyComplaints"; // example
-
-async function loadList() {
-  const complaintsList = document.getElementById("complaintsList");
-  complaintsList.innerHTML = `<p class="text-center">Loading complaints...</p>`;
-console.log("done");
+  listContainer.innerHTML = `<p class="text-center">Loading complaints...</p>`;
+  recentContainer.innerHTML = `<p class="text-center">Loading recent complaints...</p>`;
 
   try {
-    // 🔹 If your API requires POST:
-    const res = await fetch(API_URL2, {
-      method: "POST", // or "POST" depending on your API
+    const res = await fetch("https://mpf31ee0e3cb3e4242ab.free.beeceptor.com/fetchMyComplaints");
+    const complaints = await res.json();
+
+    if (!Array.isArray(complaints) || complaints.length === 0) {
+      listContainer.innerHTML = `<p class="text-center">No complaints found.</p>`;
+      recentContainer.innerHTML = `<p class="text-center">No recent complaints.</p>`;
+      return;
+    }
+
+    // Populate "My Complaints" list
+    listContainer.innerHTML = complaints
+      .map(
+        (c) => `
+        <div class="complaint-card">
+            <div class="complaint-info">
+                <h4>${c.issueTitle}</h4>
+                <p><strong>ID:</strong> ${c.complaintId}</p>
+                <p><strong>Category:</strong> ${c.Category}</p>
+                <p><strong>Location:</strong> ${c.Location}</p>
+                <p><strong>Status:</strong> <span class="status ${c.status.toLowerCase()}">${c.status}</span></p>
+                <small>Submitted on: ${new Date(c.createdAt).toLocaleDateString()}</small>
+            </div>
+        </div>`
+      )
+      .join("");
+
+    // Populate "Recent Complaints" (show last 2)
+    const recent = complaints.slice(0, 2);
+    recentContainer.innerHTML = recent
+      .map(
+        (c) => `
+          <div class="recent-item">
+              <p><strong>${c.issueTitle}</strong> <span class="status ${c.status.toLowerCase()}">${c.status}</span></p>
+              <small>${new Date(c.createdAt).toLocaleDateString()}</small>
+          </div>`
+      )
+      .join("");
+
+    // Update stats
+    updateStats(complaints);
+  } catch (err) {
+    console.error("Error fetching complaints:", err);
+    listContainer.innerHTML = `<p class="text-center text-error">Failed to load complaints.</p>`;
+    recentContainer.innerHTML = `<p class="text-center text-error">Failed to load complaints.</p>`;
+  }
+}
+
+// Function to update dashboard statistics
+function updateStats(complaints) {
+  const total = complaints.length;
+  const pending = complaints.filter((c) => c.status === "Pending").length;
+  const inProgress = complaints.filter((c) => c.status === "In Progress").length;
+  const resolved = complaints.filter((c) => c.status === "Resolved").length;
+
+  document.getElementById("totalComplaints").textContent = total;
+  document.getElementById("pendingComplaints").textContent = pending;
+  document.getElementById("progressComplaints").textContent = inProgress;
+  document.getElementById("resolvedComplaints").textContent = resolved;
+}
+
+// Called when clicking "View All"
+function loadList() {
+  showSection("my-complaints");
+  loadComplaints();
+}
+
+// Utility to toggle sections
+function showSection(sectionId) {
+  document.querySelectorAll(".content-section").forEach((sec) => sec.classList.remove("active"));
+  document.getElementById(sectionId).classList.add("active");
+
+  document.querySelectorAll(".sidebar .nav-item").forEach((item) => item.classList.remove("active"));
+  document.querySelector(`.sidebar .nav-item[onclick="showSection('${sectionId}')"]`)?.classList.add("active");
+
+  document.getElementById("pageTitle").textContent =
+    sectionId.replace("-", " ").replace(/\b\w/g, (l) => l.toUpperCase());
+}
+
+// Dummy logout handler
+function logout() {
+  alert("Logged out!");
+  // window.location.href = "login.html";
+}
+
+// Optional: Filter logic
+function filterComplaints() {
+  const status = document.getElementById("statusFilter").value.toLowerCase();
+  const category = document.getElementById("categoryFilter").value.toLowerCase();
+  const search = document.getElementById("searchInput").value.toLowerCase();
+  const listContainer = document.getElementById("complaintsList");
+
+  const complaintCards = listContainer.querySelectorAll(".complaint-card");
+
+  complaintCards.forEach((card) => {
+    const text = card.textContent.toLowerCase();
+    const statusMatch = !status || text.includes(status);
+    const categoryMatch = !category || text.includes(category);
+    const searchMatch = !search || text.includes(search);
+    card.style.display = statusMatch && categoryMatch && searchMatch ? "" : "none";
+  });
+}
+
+
+document.getElementById("complaintForm").addEventListener("submit", async function (e) {
+  e.preventDefault();
+
+  const form = e.target;
+
+  let userEmail = localStorage.getItem('userEmail')
+
+  // Gather form data into JSON
+  const data = {
+    complaintId: "CMP" + Date.now(), // optional auto-generated ID
+    userEmail,
+    issueTitle: form.title.value.trim(),
+    Category: form.category.value,
+    description: form.description.value.trim(),
+    Location: form.location.value.trim(),
+  };
+
+  // Disable submit button during request
+  const submitBtn = form.querySelector(".btn-primary");
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Submitting...";
+
+  try {
+    const response = await fetch("https://mpf31ee0e3cb3e4242ab.free.beeceptor.com/complaints", {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email: localStorage.getItem("loggedInUserEmail") })
-
+      body: JSON.stringify(data),
     });
 
-    if (!res.ok) throw new Error("Failed to fetch complaints");
+    if (!response.ok) throw new Error(`Server responded with ${response.status}`);
 
-    // Directly use the real response
-    const data = await res.json();
-    complaintsData = Array.isArray(data) ? data : data.data || [];
-
-    displayComplaints(complaintsData);
+    alert("✅ Complaint submitted successfully!");
+    console.log("Server response:", await response.json().catch(() => ({})));
+    form.reset();
   } catch (error) {
-    console.error(error);
-    complaintsList.innerHTML = `<p class="text-center text-danger">Error loading complaints.</p>`;
+    console.error("Submission failed:", error);
+    alert("❌ Failed to submit complaint. Please try again later.");
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Submit Complaint";
   }
+});
+
+// Reset button
+function resetForm() {
+  document.getElementById("complaintForm").reset();
 }
 
-// -------------------------------
-// 🟣 DISPLAY COMPLAINTS
-// -------------------------------
-function displayComplaints(data) {
-  const complaintsList = document.getElementById("complaintsList");
-
-  if (!data || data.length === 0) {
-    complaintsList.innerHTML = `<p class="text-center">No complaints found.</p>`;
-    return;
-  }
-
-  complaintsList.innerHTML = data
-    .map(
-      (item) => `
-      <div class="complaint-card">
-        <div class="complaint-header">
-          <h3>${item.issueTitle}</h3>
-          <span class="status ${item.status?.toLowerCase() || ""}">${item.status || "N/A"}</span>
-        </div>
-        <p><strong>Complaint ID:</strong> ${item.complaintId || item._id}</p>
-        <p><strong>Category:</strong> ${item.Category}</p>
-        <p><strong>Description:</strong> ${item.description}</p>
-        <p><strong>Location:</strong> ${item.Location}</p>
-        <p><strong>Email:</strong> ${item.userEmail}</p>
-      </div>
-    `
-    )
-    .join("");
-}
-
-// -------------------------------
-// 🟠 FILTER FUNCTION
-// -------------------------------
-function filterComplaints() {
-  const statusFilter = document.getElementById("statusFilter").value.toLowerCase();
-  const categoryFilter = document.getElementById("categoryFilter").value.toLowerCase();
-  const searchInput = document.getElementById("searchInput").value.toLowerCase();
-
-  const filtered = complaintsData.filter((c) => {
-    const matchesStatus = !statusFilter || c.status.toLowerCase() === statusFilter;
-    const matchesCategory = !categoryFilter || c.Category.toLowerCase() === categoryFilter;
-    const matchesSearch =
-      !searchInput ||
-      c.issueTitle.toLowerCase().includes(searchInput) ||
-      c.description.toLowerCase().includes(searchInput) ||
-      c.Location.toLowerCase().includes(searchInput);
-    return matchesStatus && matchesCategory && matchesSearch;
-  });
-
-  displayComplaints(filtered);
-}
 

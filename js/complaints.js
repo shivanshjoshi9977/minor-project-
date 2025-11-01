@@ -7,7 +7,7 @@ async function fetchComplaints() {
 
   try {
     const res = await fetch(API_URL, {
-      method: "POST", // ✅ changed from GET → POST
+      method: "POST", 
       headers: {
         "Content-Type": "application/json",
       },
@@ -75,6 +75,8 @@ function renderAll() {
 }
 
 fetchComplaints();
+
+
 async function fetchStats() {
     try {
         const response = await fetch("http://localhost:3000/complaint/fetchallstats", {
@@ -100,15 +102,6 @@ async function fetchStats() {
         // Show recent complaints
         const recentContainer = document.getElementById("recent");
         recentContainer.innerHTML = "";
-
-        // stats.slice(-5).reverse().forEach((c) => {
-        //     const item = document.createElement("div");
-        //     item.classList.add("recent-item");
-        //     item.innerHTML = `
-        //         <strong>${c.title}</strong> - <span>${c.status}</span>
-        //     `;
-        //     recentContainer.appendChild(item);
-        // });
 
     } catch (error) {
         console.error("Error fetching stats:", error);
