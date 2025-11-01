@@ -50,7 +50,7 @@ async function loadComplaints() {
                 <p><strong>Category:</strong> ${c.Category}</p>
                 <p><strong>Location:</strong> ${c.Location}</p>
                 <p><strong>Status:</strong> <span class="status ${c.status.toLowerCase()}">${c.status}</span></p>
-                <small>Submitted on: ${new Date(c.createdAt).toLocaleDateString()}</small>
+                <!-- <small>Submitted on: ${new Date(c.createdAt).toLocaleDateString()}</small> -->
             </div>
         </div>`
       )
@@ -158,7 +158,7 @@ document.getElementById("complaintForm").addEventListener("submit", async functi
   submitBtn.textContent = "Submitting...";
 
   try {
-    const response = await fetch("https://mpf31ee0e3cb3e4242ab.free.beeceptor.com/complaints", {
+    const response = await fetch("http://localhost:3000/complaint/newcomplaint", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
