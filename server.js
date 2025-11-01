@@ -6,7 +6,7 @@ const complaintRoutes = require("./Routes/complaintRoutes")
 const bodyParser = require("body-parser")
 const cors = require("cors")
 const app = express()
-app.use(cors())
+app.use(cors({ origin: "*" }));
 db()
 app.use(bodyParser.json())
 app.use("/user",userRoutes)
