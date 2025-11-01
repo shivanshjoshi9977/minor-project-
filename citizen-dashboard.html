@@ -160,10 +160,10 @@
                                     <i class="fas fa-plus"></i>
                                     <span>New Complaint</span>
                                 </button>
-                                <button class="action-btn" onclick="trackComplaint()">
+                                <!-- <button class="action-btn" onclick="trackComplaint()">
                                     <i class="fas fa-search"></i>
                                     <span>Track Complaint</span>
-                                </button>
+                                </button> -->
                                 <button class="action-btn" onclick="showSection('profile')">
                                     <i class="fas fa-user-edit"></i>
                                     <span>Update Profile</span>
@@ -269,6 +269,7 @@
                     </div>
 
                     <div class="profile-grid">
+                        <!-- Personal Info -->
                         <div class="profile-card">
                             <h3>Personal Information</h3>
                             <form id="profileForm">
@@ -278,34 +279,22 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="profileEmail">Email Address</label>
-                                    <input type="email" id="profileEmail" name="email" required readonly>
+                                    <input type="email" id="profileEmail" name="email" required disabled>
                                 </div>
                                 <div class="form-group">
                                     <label for="profilePhone">Phone Number</label>
                                     <input type="tel" id="profilePhone" name="phone">
                                 </div>
+
+                                <div class="form-group">
+                                    <label for="currentPassword">Password</label>
+                                    <input type="password" id="currentPassword" name="currentPassword" required>
+                                </div>
                                 <button type="submit" class="btn btn-primary">Update Profile</button>
                             </form>
                         </div>
 
-                        <div class="profile-card">
-                            <h3>Change Password</h3>
-                            <form id="passwordForm">
-                                <div class="form-group">
-                                    <label for="currentPassword">Current Password</label>
-                                    <input type="password" id="currentPassword" name="currentPassword" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="newPassword">New Password</label>
-                                    <input type="password" id="newPassword" name="newPassword" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="confirmPassword">Confirm New Password</label>
-                                    <input type="password" id="confirmPassword" name="confirmPassword" required>
-                                </div>
-                                <button type="submit" class="btn btn-primary">Change Password</button>
-                            </form>
-                        </div>
+                       
                     </div>
                 </div>
             </section>
@@ -327,6 +316,78 @@
             </form>
         </div>
     </div>
+
+    <script>
+        // --- CONFIG ---
+        const API_BASE = "http://localhost:3000/user";
+        const userEmail = "test@gmail.com"; // Ideally get from sessionStorage or login data
+
+        // --- LOAD USER DATA ---
+        async function loadUserProfile() {
+            try {
+                const response = await fetch(`${API_BASE}/myprofile`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ userEmail })
+                });
+
+                const data = await response.json();
+
+                if (data && data.length > 0) {
+                    const user = data[0];
+                    document.getElementById("profileName").value = user.fullName || "";
+                    document.getElementById("profileEmail").value = user.email || "";
+                    document.getElementById("profilePhone").value = user.contact || "";
+                } else {
+                    alert("User not found!");
+                }
+            } catch (error) {
+                console.error("Error loading profile:", error);
+                alert("Failed to load profile");
+            }
+        }
+
+        // --- UPDATE PROFILE ---
+        document.getElementById("profileForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const fullName = document.getElementById("profileName").value;
+            const email = document.getElementById("profileEmail").value;
+            const contact = document.getElementById("profilePhone").value;
+            const password = document.getElementById("currentPassword").value;
+
+            try {
+                const response = await fetch(`${API_BASE}/updateprofile`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ userEmail: email, fullName, contact, password })
+                });
+
+                const result = await response.json();
+                
+                if(!response.ok)
+                {
+                    alert("Invalid details!!!")
+                }
+
+                if(response.ok)
+                {
+
+                    alert("Profile updated successfully!");
+                    location.reload();
+
+                }
+
+                console.log(result);
+            } catch (error) {
+                console.error("Error updating profile:", error);
+                alert("Failed to update profile");
+            }
+        });
+
+        // Load profile on page load
+        document.addEventListener("DOMContentLoaded", loadUserProfile);
+    </script>
+
     <script src="js/main.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/complaints.js"></script>

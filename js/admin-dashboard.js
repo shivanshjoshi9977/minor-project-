@@ -2,6 +2,12 @@ setTimeout(()=>{
 showNotification("  Welcome,System Administrator!", "success");
 },500)
 
+if(!localStorage.getItem("adminEmail"))
+{
+    alert("Please login first!")
+    window.location.href = "index.html";
+}
+
 
 const showSection=function(id){
 document.querySelectorAll('.content-section').forEach(s=> s.classList.remove('active'))
@@ -15,6 +21,7 @@ document.querySelector(`[onclick="showSection('${id}')"]`).classList.add('active
 
 const logout=function(){
     showNotification('  Logged out','success')
+    localStorage.clear("adminEmail")
    setTimeout(()=>{
     window.location.href='index.html'
    },600)

@@ -79,6 +79,7 @@ const response = await fetch(adminLogin,{
 })
 if (response.status == 200 || response.status == 204) {
   alert('successfully login...');
+  localStorage.setItem("adminEmail", email)
   window.location.href="admin-dashboard.html";
 }else{
   alert('Invalid credentials');

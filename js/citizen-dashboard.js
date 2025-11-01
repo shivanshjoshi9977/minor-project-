@@ -1,9 +1,54 @@
 const SERVER_URL_2 = "http://localhost:3000"
 const mycomplaints = `${SERVER_URL_2}/complaint/fetchMyComplaints`
+const myProfile = `${SERVER_URL_2}/user/myprofile`
 
 document.addEventListener("DOMContentLoaded", () => {
   loadComplaints();
+  userDetails()
+
+  if(!localStorage.getItem("userEmail"))
+  {
+    alert("Please Login first!")
+    window.location.href = "index.html";
+  }
+
 });
+
+
+
+
+async function userDetails() {
+  let userEmail = localStorage.getItem("userEmail")
+  const profileName = document.getElementById("userName");
+
+  try {
+    const res = await fetch(myProfile, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userEmail }),
+    });
+
+    if (!res.ok) {
+      throw new Error(`Server responded with ${res.status}`);
+    }
+
+    console.log("user email: ",userEmail)
+    const data = await res.json();
+    console.log(data);
+
+    let userFullName = data[0].fullName;
+    console.log("User full name fetched: ",userFullName)
+
+    profileName.textContent = userFullName;
+
+  }
+  catch (err) {
+    console.log(err);
+  }
+};
+
 
 // Function to load all complaints dynamically
 async function loadComplaints() {
@@ -26,13 +71,10 @@ async function loadComplaints() {
     if (!res.ok) {
       throw new Error(`Server responded with ${res.status}`);
     }
-    console.log(res);
-    
+
     const complaints = await res.json();
     console.log(complaints);
-    console.log(userEmail);
-    
-    
+
     if (!Array.isArray(complaints) || complaints.length === 0) {
       listContainer.innerHTML = `<p class="text-center">No complaints found.</p>`;
       recentContainer.innerHTML = `<p class="text-center">No recent complaints.</p>`;
@@ -45,7 +87,7 @@ async function loadComplaints() {
         (c) => `
         <div class="complaint-card">
             <div class="complaint-info">
-                <h4>${c.issueTitle}</h4>
+                <h4><strong>Complaint Title:</strong> <font color="red">${c.issueTitle}</font></h4>
                 <p><strong>ID:</strong> ${c.complaintId}</p>
                 <p><strong>Category:</strong> ${c.Category}</p>
                 <p><strong>Location:</strong> ${c.Location}</p>
@@ -56,14 +98,14 @@ async function loadComplaints() {
       )
       .join("");
 
-    // Populate "Recent Complaints" (last 2)
+
     const recent = complaints.slice(0, 2);
     recentContainer.innerHTML = recent
       .map(
         (c) => `
           <div class="recent-item">
-              <p><strong>${c.issueTitle}</strong> <span class="status ${c.status.toLowerCase()}">${c.status}</span></p>
-              <small>${new Date(c.createdAt).toLocaleDateString()}</small>
+              <p><strong>Complaint Title: <font color="red">${c.issueTitle}</font></strong> 
+              <br><strong>Status: <span class="status ${c.status.toLowerCase()}">${c.status}</span></strong></p>
           </div>`
       )
       .join("");
@@ -112,7 +154,8 @@ function showSection(sectionId) {
 // Dummy logout handler
 function logout() {
   alert("Logged out!");
-  // window.location.href = "login.html";
+  localStorage.clear()
+  window.location.href = "index.html";
 }
 
 // Optional: Filter logic
