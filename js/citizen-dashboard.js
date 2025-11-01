@@ -42,6 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Function to load all complaints dynamically
 async function loadComplaints() {
+  let userEmail = localStorage.getItem("userEmail")
   const listContainer = document.getElementById("complaintsList");
   const recentContainer = document.getElementById("recentComplaints");
 
@@ -49,9 +50,24 @@ async function loadComplaints() {
   recentContainer.innerHTML = `<p class="text-center">Loading recent complaints...</p>`;
 
   try {
-    const res = await fetch("https://mpf31ee0e3cb3e4242ab.free.beeceptor.com/fetchMyComplaints");
-    const complaints = await res.json();
+    const res = await fetch("http://localhost:3000/complaint/fetchMyComplaints", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email: userEmail }),
+    });
 
+    if (!res.ok) {
+      throw new Error(`Server responded with ${res.status}`);
+    }
+    console.log(res);
+    
+    const complaints = await res.json();
+    console.log(complaints);
+    console.log(userEmail);
+    
+    
     if (!Array.isArray(complaints) || complaints.length === 0) {
       listContainer.innerHTML = `<p class="text-center">No complaints found.</p>`;
       recentContainer.innerHTML = `<p class="text-center">No recent complaints.</p>`;
@@ -75,7 +91,7 @@ async function loadComplaints() {
       )
       .join("");
 
-    // Populate "Recent Complaints" (show last 2)
+    // Populate "Recent Complaints" (last 2)
     const recent = complaints.slice(0, 2);
     recentContainer.innerHTML = recent
       .map(
@@ -95,6 +111,7 @@ async function loadComplaints() {
     recentContainer.innerHTML = `<p class="text-center text-error">Failed to load complaints.</p>`;
   }
 }
+
 
 // Function to update dashboard statistics
 function updateStats(complaints) {
