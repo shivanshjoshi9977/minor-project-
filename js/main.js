@@ -1,7 +1,7 @@
 const SERVER_URL = "http://localhost:3000"
 const adminLogin = `${SERVER_URL}/admin/login`
 const userLogin = `${SERVER_URL}/user/login`
-const userRegister = `${SERVER_URL}/user/login`
+const userRegister = `${SERVER_URL}/user/register`
 
 const slides = document.querySelectorAll(".slide");
 const indicator = document.querySelectorAll(".indicator");
@@ -120,16 +120,19 @@ function showNotification(m, type = "success") {
 const register=document.getElementById('registerForm')
 register.addEventListener('submit',async (event)=>{
 event.preventDefault()
-const email=document.getElementById('userEmail').value
-const password=document.getElementById('userPassword').value
+const email=document.getElementById('email').value
+const password=document.getElementById('password').value
 const contact=document.getElementById('phone_num').value;
 const fullName=document.getElementById('name').value;
-const confirmPassword = document.getElementById('pass2').value;
-if(password !== confirmPassword) {
+const confirmPasswordUser = document.getElementById('confirmPassword').value;
+
+
+if(password!=confirmPasswordUser) {
+  console.log("password:",password,"\nconfirm password:",confirmPasswordUser)
   alert('Passwords do not match!');
   return;
 }
-console.log(email,password,contact,fullName,confirmPassword);
+console.log(email,password,contact,fullName,confirmPasswordUser);
 const response = await fetch(userRegister,{
   method:'POST',
   headers:{
@@ -144,13 +147,19 @@ const response = await fetch(userRegister,{
   })
 })
 // const data=response.json()
-console.log(response);
-console.log(response.ok);
 
-if (response.status == 200 || response.status == 204) {
+
+if (response.status == 200 || response.status == 204 || response.status == 201) {
   alert('successfully Registered...');
    closeModal('registerModal')
-}else{
+}
+
+else if(response.status==400)
+{
+  alert("Email already registered")
+}
+
+else{
   alert('Failed to Registered...');
 }})
 

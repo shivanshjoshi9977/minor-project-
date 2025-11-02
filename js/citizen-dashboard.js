@@ -6,8 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loadComplaints();
   userDetails()
 
-  if(!localStorage.getItem("userEmail"))
-  {
+  if (!localStorage.getItem("userEmail")) {
     alert("Please Login first!")
     window.location.href = "index.html";
   }
@@ -27,19 +26,19 @@ async function userDetails() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ userEmail }),
+      body: JSON.stringify({ email: userEmail }),
     });
 
     if (!res.ok) {
       throw new Error(`Server responded with ${res.status}`);
     }
 
-    console.log("user email: ",userEmail)
+    console.log("user email: ", userEmail)
     const data = await res.json();
     console.log(data);
 
-    let userFullName = data[0].fullName;
-    console.log("User full name fetched: ",userFullName)
+    let userFullName = data.fullName;
+    console.log("User full name fetched: ", userFullName)
 
     profileName.textContent = userFullName;
 
@@ -48,6 +47,10 @@ async function userDetails() {
     console.log(err);
   }
 };
+
+
+
+
 
 
 // Function to load all complaints dynamically
@@ -91,7 +94,15 @@ async function loadComplaints() {
                 <p><strong>ID:</strong> ${c.complaintId}</p>
                 <p><strong>Category:</strong> ${c.Category}</p>
                 <p><strong>Location:</strong> ${c.Location}</p>
-                <p><strong>Status:</strong> <span class="status ${c.status.toLowerCase()}">${c.status}</span></p>
+                <p><strong>Status:</strong>
+                 <span style="color:${c.status === "Resolved"
+            ? "green"
+            : c.status === "Rejected"
+              ? "red"
+              : c.status === "In-Progress"
+                ? "blue"
+                : "orange"
+          }"><b>${c.status}</b></span></p>
                 <!-- <small>Submitted on: ${new Date(c.createdAt).toLocaleDateString()}</small> -->
             </div>
         </div>`
@@ -105,7 +116,14 @@ async function loadComplaints() {
         (c) => `
           <div class="recent-item">
               <p><strong>Complaint Title: <font color="red">${c.issueTitle}</font></strong> 
-              <br><strong>Status: <span class="status ${c.status.toLowerCase()}">${c.status}</span></strong></p>
+              <br><b>Status: <span style="color:${c.status === "Resolved"
+            ? "green"
+            : c.status === "Rejected"
+              ? "red"
+              : c.status === "In-Progress"
+                ? "blue"
+                : "orange"
+          }">${c.status}</b></span></p>
           </div>`
       )
       .join("");
@@ -124,7 +142,7 @@ async function loadComplaints() {
 function updateStats(complaints) {
   const total = complaints.length;
   const pending = complaints.filter((c) => c.status === "Pending").length;
-  const inProgress = complaints.filter((c) => c.status === "In Progress").length;
+  const inProgress = complaints.filter((c) => c.status === "In-Progress").length;
   const resolved = complaints.filter((c) => c.status === "Resolved").length;
 
   document.getElementById("totalComplaints").textContent = total;
@@ -213,6 +231,7 @@ document.getElementById("complaintForm").addEventListener("submit", async functi
 
     alert("✅ Complaint submitted successfully!");
     console.log("Server response:", await response.json().catch(() => ({})));
+    location.reload()
     form.reset();
   } catch (error) {
     console.error("Submission failed:", error);

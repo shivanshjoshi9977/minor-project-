@@ -237,7 +237,7 @@
                         <select id="statusFilter" onchange="filterComplaints()">
                             <option value="">All Status</option>
                             <option value="Pending">Pending</option>
-                            <option value="In Progress">In Progress</option>
+                            <option value="In-Progress">In Progress</option>
                             <option value="Resolved">Resolved</option>
                             <option value="Rejected">Rejected</option>
                         </select>
@@ -320,7 +320,7 @@
     <script>
         // --- CONFIG ---
         const API_BASE = "http://localhost:3000/user";
-        const userEmail = "test@gmail.com"; // Ideally get from sessionStorage or login data
+        const userEmail = localStorage.getItem("userEmail") // Ideally get from sessionStorage or login data
 
         // --- LOAD USER DATA ---
         async function loadUserProfile() {
@@ -328,19 +328,15 @@
                 const response = await fetch(`${API_BASE}/myprofile`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ userEmail })
+                    body: JSON.stringify({ email: userEmail })
                 });
 
-                const data = await response.json();
-
-                if (data && data.length > 0) {
+                const data = await response.json();    
                     const user = data[0];
-                    document.getElementById("profileName").value = user.fullName || "";
-                    document.getElementById("profileEmail").value = user.email || "";
-                    document.getElementById("profilePhone").value = user.contact || "";
-                } else {
-                    alert("User not found!");
-                }
+                    document.getElementById("profileName").value = data.fullName || "";
+                    document.getElementById("profileEmail").value = data.email || "";
+                    document.getElementById("profilePhone").value = data.contact || "";
+                
             } catch (error) {
                 console.error("Error loading profile:", error);
                 alert("Failed to load profile");
