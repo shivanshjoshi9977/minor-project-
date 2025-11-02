@@ -5,4 +5,5 @@ Router.post("/newcomplaint",complaintController.registerNewComplaint)
 Router.post("/fetchallcomplaint",complaintController.fetchAllComplaint)
 Router.post("/fetchallstats",complaintController.fetchAllStats)
 Router.post("/fetchMyComplaints",complaintController.fetchMyComplaints)
+Router.post("/updateComplaint",complaintController.updateComplaint)
 module.exports = Router

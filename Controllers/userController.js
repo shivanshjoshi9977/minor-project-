@@ -4,6 +4,7 @@ const userModel = require("../models/Users")
 
 exports.register = async (req, res) => {
     const { fullName, email, password, contact } = req.body
+    console.log("Registration req received: ",req.body)
     try {
         let user = await userModel.findOne({ email })
         if (user) {
@@ -11,6 +12,7 @@ exports.register = async (req, res) => {
         }
         user = new userModel({ fullName, email, password, contact })
         await user.save()
+        return res.status(200).json({msg: "Registered Successfully"})
     } catch (err) {
         console.log(err.message);
         return res.status(500).send("SERVER ERROR")
@@ -20,11 +22,11 @@ exports.register = async (req, res) => {
 }
 exports.login = async (req, res) => {
     const { email, password } = req.body
-    console.log(req.body);
+   
 
     try {
         let user = await userModel.findOne({ email })
-        console.log(user);
+      
         if (!user) {
             return res.status(400).json({ msg: "INVALID CREDENTIALS" })
         }
@@ -53,10 +55,11 @@ exports.allUsers = async (req , res)=>{
 }
 
 exports.myprofile = async (req, res) => {
-    const email = req.body.userEmail
+    const {email} = req.body
+    console.log("Requested email: ",email)
     try {
-        const user = await userModel.find({ email })
-        console.log(user)
+        const user = await userModel.findOne({email})
+        console.log("Fetch user from DB: ",user)
         return res.status(200).json(user)
     } catch (err) {
         console.log(err.message);
@@ -76,8 +79,7 @@ exports.updateProfile = async (req, res) => {
 
 
         if (password != user.password) {
-            console.log("passowrd: ", password)
-            console.log("Database passowrd", user.password)
+         
             return res.status(401).json({ message: "Invalid passowrd" });
         }
 

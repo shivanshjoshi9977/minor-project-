@@ -21,7 +21,7 @@ exports.login = async (req , res)=>{
 }
 exports.register = async (req , res)=>{
     const {fullName , email, password ,contact} = req.body
-    console.log(req.body)
+    
     try {
         let admin = await adminModel.findOne({email})
         if (admin){

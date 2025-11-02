@@ -10,7 +10,7 @@ exports.registerNewComplaint = async (req , res)=>{
         await complaint.save()
         return res.status(200).json({msg:"COMPLAINT REGISTERED SUCCESSFULLY"})  
     } catch (err) {
-        console.log(err.message);
+
         return res.status(500).send("SERVER ERROR")
     }
 }
@@ -48,3 +48,38 @@ exports.fetchMyComplaints = async (req , res)=>{
         return res.status(500).send("SERVER ERROR")
     }
 }
+
+
+
+exports.updateComplaint = async (req, res) => {
+  try {
+    const { complaintId, status } = req.body;
+
+    // Validate input
+    if (!complaintId || !status) {
+      return res.status(400).json({ message: "complaintId and status are required" });
+    }
+
+    // Find and update the complaint by complaintId
+    const updatedComplaint = await complaintModel.findOneAndUpdate(
+      { complaintId },
+      { $set: { status } },
+      { new: true } // return the updated document
+    );
+
+    if (!updatedComplaint) {
+      return res.status(404).json({ message: "Complaint not found" });
+    }
+
+    // Success
+    res.status(200).json({
+      message: "Complaint status updated successfully",
+      complaint: updatedComplaint,
+    });
+
+  } catch (error) {
+    console.error("❌ Error updating complaint:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
